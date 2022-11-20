@@ -15,6 +15,15 @@ class CreateRole extends CreateRecord
 
     public Collection $permissions;
 
+    public ?array $shields = [];
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->shields = static::$resource::getShieldData($this->record);
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $this->permissions = collect($data)->filter(function ($permission, $key) {

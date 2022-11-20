@@ -16,6 +16,15 @@ class EditRole extends EditRecord
 
     public Collection $permissions;
 
+    public ?array $shields = [];
+
+    public function mount($record): void
+    {
+        parent::mount($record);
+
+        $this->shields = static::$resource::getShieldData($this->record);
+    }
+
     protected function getActions(): array
     {
         return [
@@ -29,6 +38,7 @@ class EditRole extends EditRecord
             return ! in_array($key, ['name', 'guard_name', 'select_all']) && Str::contains($key, '_');
         })->keys();
 
+        dd($data);
         return Arr::only($data, ['name', 'guard_name']);
     }
 
