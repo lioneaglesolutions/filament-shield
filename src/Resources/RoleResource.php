@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Livewire\Livewire;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -73,7 +72,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('experiment')
                             ->schema([
-                                Forms\Components\View::make('experiment')
+                                Forms\Components\View::make('experiment'),
                             ]),
                         // Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
 
@@ -562,20 +561,20 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getShieldData(?Model $record): array
     {
         return collect(FilamentShield::getResources())
-            ->flatMap(function ($entity) use($record){
+            ->flatMap(function ($entity) use ($record) {
                 return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-                    ->reduce( function ($option, $permission) use ($entity,$record) {
-                            $option[$entity['model'].'|'.$permission] = [
-                                'label' => $permission,
-                                'name'  => $name = $permission . '_' . $entity['resource'],
-                                'value' => blank($record) ? false : $record->permissions()->whereName($name)->exists()
-                            ];
+                    ->reduce(function ($option, $permission) use ($entity, $record) {
+                        $option[$entity['model'].'|'.$permission] = [
+                            'label' => $permission,
+                            'name' => $name = $permission.'_'.$entity['resource'],
+                            'value' => blank($record) ? false : $record->permissions()->whereName($name)->exists(),
+                        ];
 
-                            return $option;
-                        }
+                        return $option;
+                    }
                     );
             })
-            ->groupBy(function($item, $key) {
+            ->groupBy(function ($item, $key) {
                 return str($key)->before('|');
             })
             ->toArray();

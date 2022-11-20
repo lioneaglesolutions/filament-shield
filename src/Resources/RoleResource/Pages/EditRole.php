@@ -39,6 +39,7 @@ class EditRole extends EditRecord
         })->keys();
 
         dd($data);
+
         return Arr::only($data, ['name', 'guard_name']);
     }
 
